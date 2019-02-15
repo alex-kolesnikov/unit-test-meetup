@@ -25,19 +25,9 @@ public class ScrumServiceImpl implements ScrumService {
     @Override
     public void finishBacklogItem(int itemId, Resolution resolution) {
         final BacklogItem item = backlogItemRepository.get(itemId);
-
-        if (item.status != ItemStatus.INPROGRESS) {
-            throw new RuntimeException("Тикет не в работе");
-        }
-
         final Sprint activeSprint = sprintRepository.getActive();
-        if (activeSprint == null) {
-            throw new RuntimeException("Нет активного спринта");
-        }
 
-        if (activeSprint.committedItems.stream().noneMatch(i -> i.id == itemId)) {
-            throw new RuntimeException("Тикет не включен в активный спринт");
-        }
+        mayBacklogItemBeFinished(item, activeSprint);
 
         item.status = ItemStatus.CLOSED;
         item.resolution = Optional.of(resolution);
@@ -47,6 +37,20 @@ public class ScrumServiceImpl implements ScrumService {
         sprintRepository.save(activeSprint);
 
         log.info("Вероятность закончить спринт теперь " + activeSprint.probabilityOfSuccess());
+    }
+
+    static void mayBacklogItemBeFinished(BacklogItem item, Sprint activeSprint) {
+        if (item.status != ItemStatus.INPROGRESS) {
+            throw new RuntimeException("Тикет не в работе");
+        }
+
+        if (activeSprint == null) {
+            throw new RuntimeException("Нет активного спринта");
+        }
+
+        if (activeSprint.committedItems.stream().noneMatch(i -> i.id == item.id)) {
+            throw new RuntimeException("Тикет не включен в активный спринт");
+        }
     }
 
     @Override

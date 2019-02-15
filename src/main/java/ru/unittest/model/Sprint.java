@@ -2,11 +2,12 @@ package ru.unittest.model;
 
 import ru.unittest.model.BacklogItem.ItemStatus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Sprint {
     public String name;
-    public List<BacklogItem> committedItems;
+    public List<BacklogItem> committedItems = new ArrayList<>();
 
     public boolean isActive;
     public int completedPoints;
