@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface SprintRepository {
     List<Sprint> getAll();
 
-    Optional<Sprint> getActive();
+    Sprint getActive();
 
     Sprint get(int id);
 

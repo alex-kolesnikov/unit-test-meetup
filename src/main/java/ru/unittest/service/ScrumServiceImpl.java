@@ -30,12 +30,12 @@ public class ScrumServiceImpl implements ScrumService {
             throw new RuntimeException("Тикет не в работе");
         }
 
-        final Optional<Sprint> activeSprint = sprintRepository.getActive();
-        if (!activeSprint.isPresent()) {
+        final Sprint activeSprint = sprintRepository.getActive();
+        if (activeSprint == null) {
             throw new RuntimeException("Нет активного спринта");
         }
 
-        if (activeSprint.get().committedItems.stream().noneMatch(i -> i.id == itemId)) {
+        if (activeSprint.committedItems.stream().noneMatch(i -> i.id == itemId)) {
             throw new RuntimeException("Тикет не включен в активный спринт");
         }
 
@@ -43,10 +43,10 @@ public class ScrumServiceImpl implements ScrumService {
         item.resolution = Optional.of(resolution);
         backlogItemRepository.save(item);
 
-        activeSprint.get().completedPoints += item.storyPoints;
-        sprintRepository.save(activeSprint.get());
+        activeSprint.completedPoints += item.storyPoints;
+        sprintRepository.save(activeSprint);
 
-        log.info("Вероятность закончить спринт теперь " + activeSprint.get().probabilityOfSuccess());
+        log.info("Вероятность закончить спринт теперь " + activeSprint.probabilityOfSuccess());
     }
 
     @Override
