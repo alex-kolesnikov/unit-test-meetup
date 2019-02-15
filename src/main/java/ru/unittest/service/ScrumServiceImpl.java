@@ -1,5 +1,7 @@
 package ru.unittest.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.unittest.model.BacklogItem;
 import ru.unittest.model.BacklogItem.ItemStatus;
@@ -17,6 +19,8 @@ public class ScrumServiceImpl implements ScrumService {
 
     @Autowired
     private SprintRepository sprintRepository = null;
+
+    private static final Logger log = LoggerFactory.getLogger(ScrumServiceImpl.class);
 
     @Override
     public void finishBacklogItem(int itemId, Resolution resolution) {
@@ -41,6 +45,8 @@ public class ScrumServiceImpl implements ScrumService {
 
         activeSprint.get().completedPoints += item.storyPoints;
         sprintRepository.save(activeSprint.get());
+
+        log.info("Вероятность закончить спринт теперь " + activeSprint.get().probabilityOfSuccess());
     }
 
     @Override
