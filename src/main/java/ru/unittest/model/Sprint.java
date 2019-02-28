@@ -1,5 +1,6 @@
 package ru.unittest.model;
 
+import ru.unittest.math.BudweiserFormula;
 import ru.unittest.model.BacklogItem.ItemStatus;
 
 import java.util.ArrayList;
@@ -17,17 +18,10 @@ public class Sprint {
             return 1.0;
         }
 
-        return Math.min(munchausenMethod(), budweiserFormula());
+        return Math.min(munchausenMethod(), BudweiserFormula.calculate(this));
     }
 
     private double munchausenMethod() {
         return 1.0 / Math.exp(committedItems.size());
-    }
-
-    private double budweiserFormula() {
-        int k = (int)Math.ceil(committedItems.size() / 3);
-        int totalPoints = committedItems.stream().map(i -> i.storyPoints).reduce(0, Integer::sum);
-        double d = k * (((double)totalPoints) / completedPoints);
-        return 1.0 / d;
     }
 }
