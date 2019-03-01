@@ -71,12 +71,16 @@ public class ScrumServiceImplTest {
         service.setSprintRepository(sprintRepository);
         service.setBacklogItemRepository(backlogItemRepository);
 
+
+        Release release = service.scheduleFinishedWorkForRelease(makeSprintWithItems(1, 2, 2, 1), "release_001");
+    }
+
+    private Sprint makeSprintWithItems(int doneItems, int cancelledItems, int createdItems, int inProgressItems) {
         Sprint sprint = new Sprint();
-        sprint.committedItems.add(new BacklogItem() {{ status = ItemStatus.CLOSED; resolution = Optional.of(Resolution.DONE); }});
+        for (int i = 0; i < doneItems; i ++) sprint.committedItems.add(new BacklogItem() {{ status = ItemStatus.CLOSED; resolution = Optional.of(Resolution.DONE); }});
         sprint.committedItems.add(new BacklogItem() {{ status = ItemStatus.CLOSED; resolution = Optional.of(Resolution.CANCELLED); }});
         sprint.committedItems.add(new BacklogItem() {{ status = ItemStatus.CREATED; resolution = Optional.empty(); }});
         sprint.committedItems.add(new BacklogItem() {{ status = ItemStatus.INPROGRESS; resolution = Optional.empty(); }});
-
-        Release release = service.scheduleFinishedWorkForRelease(sprint, "release_001");
+        return sprint;
     }
 }
