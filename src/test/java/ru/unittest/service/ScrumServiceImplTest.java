@@ -5,10 +5,16 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import ru.unittest.model.BacklogItem;
 import ru.unittest.model.BacklogItem.ItemStatus;
+import ru.unittest.model.Release;
 import ru.unittest.model.Sprint;
+import ru.unittest.repository.BacklogItemRepository;
+import ru.unittest.repository.SprintRepository;
+
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 public class ScrumServiceImplTest {
 
@@ -54,5 +60,23 @@ public class ScrumServiceImplTest {
         } catch (Exception ex) {
             return ex;
         }
+    }
+
+    @Test
+    public void testWithoutBuilders() {
+        SprintRepository sprintRepository = mock(SprintRepository.class);
+        BacklogItemRepository backlogItemRepository = mock(BacklogItemRepository.class);
+
+        ScrumServiceImpl service = new ScrumServiceImpl();
+        service.setSprintRepository(sprintRepository);
+        service.setBacklogItemRepository(backlogItemRepository);
+
+        Sprint sprint = new Sprint();
+        sprint.committedItems.add(new BacklogItem() {{ status = ItemStatus.CLOSED; resolution = Optional.of(Resolution.DONE); }});
+        sprint.committedItems.add(new BacklogItem() {{ status = ItemStatus.CLOSED; resolution = Optional.of(Resolution.CANCELLED); }});
+        sprint.committedItems.add(new BacklogItem() {{ status = ItemStatus.CREATED; resolution = Optional.empty(); }});
+        sprint.committedItems.add(new BacklogItem() {{ status = ItemStatus.INPROGRESS; resolution = Optional.empty(); }});
+
+        Release release = service.scheduleFinishedWorkForRelease(sprint, "release_001");
     }
 }

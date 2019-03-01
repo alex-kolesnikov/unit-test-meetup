@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.unittest.model.BacklogItem;
 import ru.unittest.model.BacklogItem.ItemStatus;
 import ru.unittest.model.BacklogItem.Resolution;
+import ru.unittest.model.Release;
 import ru.unittest.model.Sprint;
 import ru.unittest.repository.BacklogItemRepository;
 import ru.unittest.repository.SprintRepository;
@@ -76,5 +77,16 @@ public class ScrumServiceImpl implements ScrumService {
         backlogItemRepository.delete(itemId);
     }
 
+    public Release scheduleFinishedWorkForRelease(Sprint sprint, String releaseName) {
+        // TODO implement
+        return new Release() {{ name = releaseName; }};
+    }
 
+    public void setBacklogItemRepository(BacklogItemRepository backlogItemRepository) {
+        this.backlogItemRepository = backlogItemRepository;
+    }
+
+    public void setSprintRepository(SprintRepository sprintRepository) {
+        this.sprintRepository = sprintRepository;
+    }
 }
